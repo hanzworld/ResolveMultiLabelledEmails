@@ -9,7 +9,7 @@ namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
 {
     public interface IFinder
     {
-        public void Find();
+        IEnumerable<FindResult> GetBatchOfThreads();
     }
     public class Finder : IFinder
     {
@@ -26,25 +26,8 @@ namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
             labels = gmail.Users.Labels.List("me").Execute().Labels.ToDictionary(l => l.Id);
         }
 
-        public void Find()
-        {
-            int count = 0;
-            foreach (var result in GetBatchOfThreads())
-            {
-                if (result.UniqueLabels.Count > 1)
-                {
-                    Console.WriteLine(result);
-                }
-                else
-                {
-                    count++;
-                }
-            }
 
-            Console.WriteLine($"{count} threads ignored");
-        }
-
-        private IEnumerable<FindResult> GetBatchOfThreads()
+        public IEnumerable<FindResult> GetBatchOfThreads()
         {
             var threadsRequest = gmail.Users.Threads.List("me");
             threadsRequest.MaxResults = 10;

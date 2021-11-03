@@ -1,7 +1,4 @@
-﻿using System;
-using Google.Apis.Gmail.v1;
-using Google.Apis.Services;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -25,7 +22,8 @@ namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
             services
                 .Configure<GoogleSecrets>(Configuration.GetSection("Google"))
                 .AddOptions()
-                .AddScoped<IFinder, Finder>();
+                .AddScoped<IFinder, Finder>()
+                .AddScoped<IResolver, Resolver>();
 
             services.AddHttpClient<GmailClient>((serviceProvider, client) =>
             {
@@ -46,8 +44,8 @@ namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
 
             var serviceProvider = services.BuildServiceProvider();
 
-            var finder = serviceProvider.GetService<IFinder>();
-            finder.Find();
+            var resolver = serviceProvider.GetService<IResolver>();
+            resolver.Resolve();
         }
     }
 
