@@ -5,7 +5,7 @@ using Google.Apis.Gmail.v1;
 using Google.Apis.Gmail.v1.Data;
 using Microsoft.Extensions.Options;
 
-namespace FindMultiLabelledEmails
+namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
 {
     public interface IFinder
     {

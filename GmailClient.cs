@@ -9,7 +9,7 @@ using Google.Apis.Gmail.v1;
 using Google.Apis.Services;
 using Google.Apis.Util.Store;
 
-namespace FindMultiLabelledEmails
+namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
 {
     public class GmailClient : GmailService
     {
@@ -38,7 +38,7 @@ namespace FindMultiLabelledEmails
             return new Initializer()
             {
                 HttpClientInitializer = credential,
-                ApplicationName = "FindMultiLabelledEmails",
+                ApplicationName = "ResolveMultiLabelledEmails",
             };
         }
     }

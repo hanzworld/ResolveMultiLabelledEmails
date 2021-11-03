@@ -1,4 +1,4 @@
-namespace FindMultiLabelledEmails
+namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
 {
     class Constants
     {
