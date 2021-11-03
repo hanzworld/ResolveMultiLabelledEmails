@@ -17,6 +17,7 @@ namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
         private readonly GmailClient gmail;
         private readonly IDictionary<string, Label> labels;
         private string[] labelsYouCanIgnore = { "TRASH", "CATEGORY_FORUMS", "CATEGORY_UPDATES", "CATEGORY_PERSONAL", "CATEGORY_PROMOTIONS", "CATEGORY_SOCIAL", "STARRED", "UNREAD", "IMPORTANT" };
+        private string nextPageToken;
 
         public Finder(IOptions<GoogleSecrets> secrets, GmailClient gmail)
         {
@@ -30,8 +31,14 @@ namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
         public IEnumerable<FindResult> GetBatchOfThreads()
         {
             var threadsRequest = gmail.Users.Threads.List("me");
-            threadsRequest.MaxResults = 10;
+            threadsRequest.MaxResults = 50;
+            if (nextPageToken != null)
+            {
+                threadsRequest.PageToken = nextPageToken;
+            }
+
             var threadsResponse = threadsRequest.Execute();
+            nextPageToken = threadsResponse.NextPageToken;
 
             foreach (var thread in threadsResponse.Threads)
             {
@@ -41,6 +48,7 @@ namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
 
                 var threadLabels = thread.Messages.SelectMany(m => m.LabelIds).Distinct().ToList();
                 var uniqueLabels = threadLabels.Except(labelsYouCanIgnore).ToList();
+
 
                 var fr = new FindResult
                 {
