@@ -40,12 +40,12 @@ namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
                 thread.Messages = request.Execute().Messages;
 
                 var threadLabels = thread.Messages.SelectMany(m => m.LabelIds).Distinct().ToList();
-
+                var uniqueLabels = threadLabels.Except(labelsYouCanIgnore).ToList();
 
                 var fr = new FindResult
                 {
                     // There are some labels one can ignore
-                    UniqueLabels = threadLabels.Except(labelsYouCanIgnore).ToList(),
+                    UniqueLabels = uniqueLabels.Select(ul => labels[ul]).ToList(),
                     Thread = thread
                 };
 
@@ -56,12 +56,12 @@ namespace GmailToIMAPMigration.ResolveMultiLabelledEmails
 
     public class FindResult
     {
-        public List<string> UniqueLabels;
+        public List<Label> UniqueLabels;
         public Thread Thread;
 
         public override string ToString()
         {
-            return $"{Thread.Snippet}\n - {Thread.Messages.Count} messages\n - {UniqueLabels.Count} labels ({String.Join<string>(',', UniqueLabels)})";
+            return $"{Thread.Snippet}\n - {Thread.Messages.Count} messages\n - {UniqueLabels.Count} labels ({String.Join<string>(',', UniqueLabels.Select(l => l.Name))})";
         }
 
     }
